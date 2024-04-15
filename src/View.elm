@@ -111,7 +111,17 @@ navbar =
 home : Model -> Html Msg
 home model =
     Html.main_ [ Attr.class "flex flex-col items-center gap-4 max-w-3xl px-4 mx-auto w-full" ]
-        [ Html.h1 [ Attr.class "mt-12 text-6xl" ] [ Html.text "Welcome" ]
+        [ Html.header [ class "text-center flex flex-col gap-2" ]
+            [ Html.h1 [ Attr.class "mt-12 text-6xl" ] [ Html.text "Welcome" ]
+            , Html.p [ Attr.class "text-lg opacity-70" ]
+                [ Html.text "The source code can be found on "
+                , Html.a
+                    [ Attr.class "underline"
+                    , Attr.href "https://github.com/jackhp95/elm-dogs"
+                    ]
+                    [ Html.text "GitHub" ]
+                ]
+            ]
         , Html.nav [ Attr.class "flex gap-4" ]
             [ Html.a [ Attr.href "/dogs", Attr.class "border opacity-70 hover:opacity-100 px-4 py-2 rounded hover:bg-[Field]" ] [ Html.text "Dogs" ]
             , Html.a [ Attr.href "/join", Attr.class "border opacity-70 hover:opacity-100 px-4 py-2 rounded hover:bg-[Field]" ] [ Html.text "Join" ]
@@ -270,6 +280,9 @@ breedView model breed =
 join : Model -> Html Msg
 join model =
     let
+        maybeMaritalStausValue =
+            Dict.get "Marital Status" model.form
+
         field name attrs =
             Html.label [ Attr.class "flex flex-col flex-auto gap-1" ]
                 [ Html.span [ Attr.class "text-sm opacity-70" ] [ Html.text name ]
@@ -311,7 +324,13 @@ join model =
                     |> List.map
                         (\value ->
                             Html.option
-                                [ Attr.value value ]
+                                [ Attr.value value
+                                , Attr.selected
+                                    (maybeMaritalStausValue
+                                        |> Maybe.map ((==) value)
+                                        |> Maybe.withDefault False
+                                    )
+                                ]
                                 [ Html.text (Shame.capitalize value) ]
                         )
                     |> (::)
@@ -319,13 +338,16 @@ join model =
                             [ Attr.value ""
                             , Attr.disabled True
                             , Attr.hidden True
-                            , Attr.selected True
+                            , Attr.selected
+                                (maybeMaritalStausValue
+                                    |> Maybe.map String.isEmpty
+                                    |> Maybe.withDefault True
+                                )
                             ]
                             [ Html.text "—" ]
                         )
                     |> Html.select
                         [ Attr.required True
-                        , Attr.value (Dict.get "Marital Status" model.form |> Maybe.withDefault "")
                         , Attr.class "default:opacity-50"
                         , Attr.class "border-[Field] border rounded px-4 py-2 w-32 self-stretch flex-auto"
                         , Attr.name "Marital Status"
