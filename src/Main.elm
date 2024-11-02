@@ -1,5 +1,15 @@
 module Main exposing (main)
 
+{-| Nothing Crazy is being done in this app.
+
+  - It's using the Store Pattern. (<https://elm-radio.com/episode/store-pattern/>)
+  - It's using a Dict for the form values. (Similar to: <https://github.com/dillonkearns/elm-form>)
+  - It's using AppUrl for routing. (<https://elm-radio.com/episode/elm-app-url/>)
+
+All of this stuff has been covered and discussed by some of the best Elm developers in the community.
+
+-}
+
 import AppUrl
 import Browser
 import Html exposing (Html)

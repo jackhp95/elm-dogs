@@ -1,5 +1,17 @@
 module View exposing (appWrapper, dog, dogs, home, join, status_404)
 
+{-| We're using:
+
+  - tailwind with some nify newish properties.
+  - some special html attributes to unlock benefical behaviors.
+
+I flexed some of the neater interactions, but I didn't concern myself too deeply with asthetics.
+I figured this was coding execrise, not a design one.
+
+That being said, I started my career in design, so if you're interested in seeing my chops, let me know.
+
+-}
+
 import Dict
 import DogCeo
 import Html exposing (Html)
@@ -9,8 +21,9 @@ import List.Extra
 import Logic exposing (Model, Msg)
 import Person
 import RemoteData exposing (RemoteData)
-import Shame
 import Store
+import Utils.Html
+import Utils.String
 
 
 unwrapStore : (a -> Html msg) -> RemoteData Store.Error a -> Html msg
@@ -232,8 +245,8 @@ breedView model breed =
                         (\breedImg ->
                             [ Html.img
                                 [ Attr.alt ""
-                                , Shame.loadingImage "lazy"
-                                , Shame.decodingImage "async"
+                                , Utils.Html.loadingImage "lazy"
+                                , Utils.Html.decodingImage "async"
                                 , Attr.src breedImg
                                 , Attr.tabindex 0
                                 , Attr.height 100
@@ -297,7 +310,7 @@ join model =
     in
     Html.form
         [ Attr.class "max-w-3xl p-4 mx-auto flex flex-col gap-4"
-        , Shame.onFormInput Logic.FormInput
+        , Utils.Html.onFormInput Logic.FormInput
         ]
         [ Html.header [ class "flex flex-col gap-2" ]
             [ Html.h1 [ Attr.class "mt-12 text-6xl" ] [ Html.text "Join" ]
@@ -308,19 +321,19 @@ join model =
             [ field "First Name"
                 [ Attr.required True
                 , Attr.size 10
-                , Shame.autocomplete "given-name"
+                , Utils.Html.autocomplete "given-name"
                 ]
             , field "Last Name"
                 [ Attr.required True
                 , Attr.size 10
-                , Shame.autocomplete "family-name"
+                , Utils.Html.autocomplete "family-name"
                 ]
             ]
         , Html.div [ Attr.class "flex flex-wrap gap-4" ]
             [ Html.label [ Attr.class "flex flex-col flex-auto gap-1" ]
                 [ Html.span [ Attr.class "text-sm opacity-70" ] [ Html.text "Marital Status" ]
                 , Person.maritalStatusList
-                    |> List.map Person.maritalStatusToString
+                    |> List.map Person.stringFromMaritalStatus
                     |> List.map
                         (\value ->
                             Html.option
@@ -331,7 +344,7 @@ join model =
                                         |> Maybe.withDefault False
                                     )
                                 ]
-                                [ Html.text (Shame.capitalize value) ]
+                                [ Html.text (Utils.String.capitalize value) ]
                         )
                     |> (::)
                         (Html.option
@@ -353,9 +366,9 @@ join model =
                         , Attr.name "Marital Status"
                         ]
                 ]
-            , field "US Phone Number"
+            , field "Phone Number"
                 [ Attr.required True
-                , Shame.autocomplete "tel-national"
+                , Utils.Html.autocomplete "tel-national"
                 , Attr.size 14
                 , Attr.placeholder "###-###-####"
                 ]
@@ -368,7 +381,7 @@ join model =
             ]
         , let
             validation =
-                Person.validatedFromForm model.form
+                Person.validatedFromDict model.form
           in
           Html.footer [ Attr.class "flex flex-col gap-4" ]
             [ (case validation of
